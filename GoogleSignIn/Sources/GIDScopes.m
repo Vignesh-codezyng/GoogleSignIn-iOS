@@ -30,10 +30,6 @@ static BOOL hasEmail(NSString *scope) {
   return [scope isEqualToString:kEmailScope] || [scope isEqualToString:kOldEmailScope];
 }
 
-static BOOL hasOpenID(NSString *scope) {
-  return [scope isEqualToString:kOpenID];
-}
-
 // Checks whether |scopes| contains or implies a particular scope, using
 // |hasScope| as the predicate.
 static BOOL hasScopeInArray(NSArray *scopes, BOOL (*hasScope)(NSString *)) {

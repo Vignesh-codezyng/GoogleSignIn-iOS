@@ -472,7 +472,7 @@ static void *kTestObserverContext = &kTestObserverContext;
   XCTAssertNotNil(_signIn.currentUser);
 
 
-  GIDSignInInternalOptions *option = [GIDSignInInternalOptions defaultOptionsWithConfiguration:nil
+  GIDSignInInternalOptions *options = [GIDSignInInternalOptions defaultOptionsWithConfiguration:nil
                                                                       presentingViewController:nil
                                                                                      loginHint:nil
                                                                                   addScopeFlow:YES
@@ -490,7 +490,7 @@ static void *kTestObserverContext = &kTestObserverContext;
   OCMStub([_user profile]).andReturn(profile);
   OCMStub([_user grantedScopes]).andReturn(@[kGrantedScope]);
 
-  [self OAuthLoginWithOptions:option
+  [self OAuthLoginWithOptions:options
                     authError:nil
                    tokenError:nil
       emmPasscodeInfoRequired:NO
@@ -1192,8 +1192,8 @@ static void *kTestObserverContext = &kTestObserverContext;
   _authError = nil;
 
   if (!options.addScopeFlow) {
-  [[[_user expect] andReturn:_authentication] authentication];
-  [[[_user expect] andReturn:_authentication] authentication];
+    [[[_user expect] andReturn:_authentication] authentication];
+    [[[_user expect] andReturn:_authentication] authentication];
   }
 
   __block GIDAuthenticationAction action;

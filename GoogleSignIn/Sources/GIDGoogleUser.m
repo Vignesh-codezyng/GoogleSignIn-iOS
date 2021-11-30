@@ -45,12 +45,6 @@ static NSString *const kOpenIDRealmParameter = @"openid.realm";
   NSString *_idToken;
 }
 
-@synthesize serverAuthCode = _serverAuthCode;
-@synthesize userID = _userID;
-@synthesize hostedDomain = _hostedDomain;
-@synthesize serverClientID = _serverClientID;
-@synthesize openIDRealm = _openIDRealm;
-
 - (instancetype)initWithAuthState:(OIDAuthState *)authState
                       profileData:(nullable GIDProfileData *)profileData {
   self = [super init];
