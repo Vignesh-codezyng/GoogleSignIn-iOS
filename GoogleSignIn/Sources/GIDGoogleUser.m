@@ -51,25 +51,7 @@ static NSString *const kOpenIDRealmParameter = @"openid.realm";
   if (self) {
     _authState = authState;
     _authentication = [[GIDAuthentication alloc] initWithAuthState:authState];
-
-    NSArray<NSString *> *grantedScopes;
-    NSString *grantedScopeString = authState.lastTokenResponse.scope;
-    if (grantedScopeString) {
-      // If we have a 'scope' parameter from the backend, this is authoritative.
-      // Remove leading and trailing whitespace.
-      grantedScopeString = [grantedScopeString stringByTrimmingCharactersInSet:
-          [NSCharacterSet whitespaceCharacterSet]];
-      // Tokenize with space as a delimiter.
-      NSMutableArray<NSString *> *parsedScopes =
-          [[grantedScopeString componentsSeparatedByString:@" "] mutableCopy];
-      // Remove empty strings.
-      [parsedScopes removeObject:@""];
-      grantedScopes = [parsedScopes copy];
-    }
-    _grantedScopes = grantedScopes;
-
     _profile = [profileData copy];
-
     _idToken = authState.lastTokenResponse.idToken;
   }
   return self;
@@ -109,38 +91,9 @@ static NSString *const kOpenIDRealmParameter = @"openid.realm";
   return [_authState.lastTokenResponse.request.additionalParameters[kOpenIDRealmParameter] copy];
 }
 
-#pragma mark - NSSecureCoding
-
-+ (BOOL)supportsSecureCoding {
-  return YES;
-}
-
-- (nullable instancetype)initWithCoder:(NSCoder *)decoder {
-  self = [super init];
-  if (self) {
-    _authentication = [decoder decodeObjectOfClass:[GIDAuthentication class]
-                                            forKey:kAuthenticationKey];
-    _grantedScopes = [decoder decodeObjectOfClass:[NSArray class] forKey:kGrantedScopesKey];
-    _profile = [decoder decodeObjectOfClass:[GIDProfileData class] forKey:kProfileDataKey];
-    _authState = [decoder decodeObjectOfClass:[OIDAuthState class] forKey:kAuthState];
-    _idToken = [decoder decodeObjectOfClass:[NSString class] forKey:kIDToken];
-  }
-  return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)encoder {
-  [encoder encodeObject:_authentication forKey:kAuthenticationKey];
-  [encoder encodeObject:_grantedScopes forKey:kGrantedScopesKey];
-  [encoder encodeObject:_profile forKey:kProfileDataKey];
-  [encoder encodeObject:_authState forKey:kAuthState];
-  [encoder encodeObject:_idToken forKey:kIDToken];
-}
-
-#pragma mark - private method
-- (void)updateAuthState:(OIDAuthState *)authState
-            profileData:(nullable GIDProfileData *)profileData {
+- (nullable NSArray<NSString *> *)grantedScopes {
   NSArray<NSString *> *grantedScopes;
-  NSString *grantedScopeString = authState.lastTokenResponse.scope;
+  NSString *grantedScopeString = _authState.lastTokenResponse.scope;
   if (grantedScopeString) {
     // If we have a 'scope' parameter from the backend, this is authoritative.
     // Remove leading and trailing whitespace.
@@ -153,7 +106,38 @@ static NSString *const kOpenIDRealmParameter = @"openid.realm";
     [parsedScopes removeObject:@""];
     grantedScopes = [parsedScopes copy];
   }
+  return grantedScopes;
+}
 
+#pragma mark - NSSecureCoding
+
++ (BOOL)supportsSecureCoding {
+  return YES;
+}
+
+- (nullable instancetype)initWithCoder:(NSCoder *)decoder {
+  self = [super init];
+  if (self) {
+    _authentication = [decoder decodeObjectOfClass:[GIDAuthentication class]
+                                            forKey:kAuthenticationKey];
+    _profile = [decoder decodeObjectOfClass:[GIDProfileData class] forKey:kProfileDataKey];
+    _authState = [decoder decodeObjectOfClass:[OIDAuthState class] forKey:kAuthState];
+    _idToken = [decoder decodeObjectOfClass:[NSString class] forKey:kIDToken];
+  }
+  return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
+  [encoder encodeObject:_authentication forKey:kAuthenticationKey];
+  [encoder encodeObject:_profile forKey:kProfileDataKey];
+  [encoder encodeObject:_authState forKey:kAuthState];
+  [encoder encodeObject:_idToken forKey:kIDToken];
+}
+
+#pragma mark - Private Methods
+
+- (void)updateAuthState:(OIDAuthState *)authState
+            profileData:(nullable GIDProfileData *)profileData {
   _authState = authState;
   _authentication = [[GIDAuthentication alloc] initWithAuthState:authState];
   _profile = [profileData copy];

@@ -20,7 +20,6 @@ static NSString *const kEmailScope = @"email";
 static NSString *const kOldEmailScope = @"https://www.googleapis.com/auth/userinfo.email";
 static NSString *const kProfileScope = @"profile";
 static NSString *const kOldProfileScope = @"https://www.googleapis.com/auth/userinfo.profile";
-static NSString *const kOpenID = @"openid";
 
 static BOOL hasProfile(NSString *scope) {
   return [scope isEqualToString:kProfileScope] || [scope isEqualToString:kOldProfileScope];
