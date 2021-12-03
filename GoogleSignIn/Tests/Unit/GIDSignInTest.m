@@ -499,6 +499,23 @@ static void *kTestObserverContext = &kTestObserverContext;
                oldAccessToken:NO
                   modalCancel:NO];
 
+  NSArray<NSString *> *grantedScopes;
+  NSString *grantedScopeString = _savedAuthorizationRequest.scope;
+
+  if (grantedScopeString) {
+    grantedScopeString = [grantedScopeString stringByTrimmingCharactersInSet:
+        [NSCharacterSet whitespaceCharacterSet]];
+    // Tokenize with space as a delimiter.
+    NSMutableArray<NSString *> *parsedScopes =
+        [[grantedScopeString componentsSeparatedByString:@" "] mutableCopy];
+    // Remove empty strings.
+    [parsedScopes removeObject:@""];
+    grantedScopes = [parsedScopes copy];
+  }
+  
+  NSArray<NSString *> *expectedScopes = @[kNewScope, kGrantedScope];
+  XCTAssertEqualObjects(grantedScopes, expectedScopes);
+
   [profile stopMocking];
 }
 
